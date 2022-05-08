@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Expense</title>
+
+    <style>
+        .about-me {
+            text-align: center;
+            font-weight: bolder;
+            color: bisque;
+        }
+        
+        .social {
+            list-style: none;
+            font-weight: 500;
+        }
+    </style>
+
+    <!-- Here, we have added CSS via Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+
+    <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous">
+    </script>
+</head>
+
+<body>
+    <!-- Here, we have added HTML -->
+
+    <!-- What we have done via our HTML Codes 
+    1. First, we have taken input fields :inputAmount, inputDescription
+    2. Second, we have placed a button to add these to our output
+    3. At last, we have allocated a div for our display separately
+    -->
+    <nav class="navbar navbar-dark bg-dark">
+        <span class="navbar-brand mb-0 h1"> Expense Diary</span>
+        <!-- HEADING TOTAL TO DISPLAY AT TOP, ID = headingTotal-->
+        <span class="navbar-brand mb-0 h1" id="headingTotal"></span>
+    </nav>
+    <div class="container-fluid bg-light" style="min-height: 100vh">
+        <div class="container">
+
+
+
+            <div class="jumbotron mt-4">
+                <div class="input-group mb-3">
+
+                    <!-- INPUT AMOUNT, ID - "inputAmount" -->
+                    <input type="text" class="form-control" placeholder="Amount spent" aria-label="Amount spent" aria-describedby="spent in rupee" id="inputAmount" />
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="spent in rupee">₹</span>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="spent at">@</span>
+                    </div>
+                    <!-- INPUT DESCRIPTION, ID = "inputDesc" -->
+                    <input type="text" class="form-control" id="inputDesc" placeholder="spent On" aria-label="spent On" aria-describedby="spent at" />
+                    <div class="input-group-append">
+
+                        <!-- BUTTON, ID = "btnAddExpense" -->
+                        <button class="btn btn-outline-primary" type="button" id="btnAddExpense">Add</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div>
+                <!-- DISPLAY TABLE, ID = "expenseTable" -->
+                <ul class="list-group" id="expenseTable">
+
+
+                </ul>
+
+            </div>
+
+        </div>
+
+        
+
+        <!-- Here, we have added Javscript -->
+
+
+        <!-- What we have done via our Javascript codes
+    1. Referenced all inputs from HTML world to our JS world 
+    2. 
+    -->
+        <script>
+            // get the heading element
+            const headingE1 = document.querySelector("#headingTotal");
+
+
+            // get the reference to inputDescription
+            const inputDescEl = document.querySelector("#inputDesc");
+
+            // reference to inputAmount
+            const inputElement = document.querySelector("#inputAmount");
+
+            // get the reference to table 
+            const expenseTableEl = document.querySelector("#expenseTable");
+
+
+            // init value of totalExpense at 0 
+            let totalExpense = 0;
+
+            // set the heading element to totalExpense initially -- will change when the button is clicked 
+            headingE1.textContent = totalExpense;
+
+            // allExpenses at one place (an empty array)
+            const allExpenses = []
+
+            // onButtonClick add inputAmount to totalExpense
+            function addExpenseToTotal() {
+
+                // an empty object - expenseItem
+                const expenseItem = {}
+
+                // read value from inputAmount
+                const textAmount = inputElement.value;
+
+                // read description from inputDescription
+                const textDesc = inputDescEl.value;
+
+                // put the amount and description in object 
+                expenseItem.desc = textDesc;
+                expenseItem.amount = textAmount;
+                expenseItem.moment = new Date(); // current date
+                
+
+                // check if the object is working
+                // console.log(expenseItem);
+
+                // pushing the object into the array to make an array of objects
+                allExpenses.push(expenseItem);
+
+                //console.table(allExpenses);
+
+                // convert it to number
+                const expense = parseInt(textAmount, 10);
+
+                // add that input to totalExpense
+                totalExpense = totalExpense + expense;
+
+                
+                const someText = `Total Expense : ${totalExpense}`
+                headingE1.textContent = someText;
+
+               
+                renderList(allExpenses);
+            }
+
+            // Get the btn element
+            const element = document.querySelector("#btnAddExpense");
+
+            // Listen to click event
+            element.addEventListener("click", addExpenseToTotal, false);
+
+
+            // Controller Functions
+
+
+            // getDateString
+            function getDateString(moment) {
+                return moment.toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric"
+                })
+            }
+
+            // Delete Items
+            function deleteItem(dateValue) {
+                const newArr = [];
+
+                console.log(dateValue);
+
+                for (let i = 0; i < allExpenses.length; i++) {
+                    if (allExpenses[i].moment.valueOf() !== dateValue) {
+                        newArr.push(allExpenses[i]);
+
+                        
+                        
+
+                    }
+                    else{ 
+                        console.log(allExpenses[i].amount);
+                        const expense = parseInt(allExpenses[i].amount, 10);
+                        totalExpense = totalExpense - expense;
+
+                
+                const someText = `Total Expense : ${totalExpense}`
+                headingE1.textContent = someText;
+                allExpenses.splice(i,1)
+
+                        
+                    }
+                    
+                }
+
+                renderList(newArr);
+
+            }
+
+            // View Layer Below (everything here is on DOM)
+
+            function renderList(newArr) {
+                const allExpenseHTML = newArr.map(expense => createListItem(expense));
+                //console.log(newArr);
+
+                // to print it to the screen 
+                const joinedAllExpenseHTML = allExpenseHTML.join("");
+                expenseTableEl.innerHTML = joinedAllExpenseHTML;
+
+
+            }
+
+            function createListItem({
+                desc,
+                amount,
+                moment
+            }) {
+                return `
+                <li class="list-group-item d-flex justify-content-between">
+							<div class="d-flex flex-column">
+								${desc} 
+								<small class="text-muted">${getDateString(moment)}</small>
+							</div>
+							<div>
+								<span class="px-5">
+									${amount}
+								</span>
+								<button type="button"  
+                                 class="btn btn-outline-danger btn-sm"
+                                
+                                 onclick = "deleteItem(${moment.valueOf()})">
+									<i class="fas fa-trash-alt"></i>
+								</button>
+							</div>
+						</li>
+                    `;
+            }
+        </script>
+
+</body>
+
+</html>
